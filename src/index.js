@@ -116,7 +116,7 @@ function calculator(number = 0) {
         }
     }
 
-    function calculate(calcMethodFunc, obj, args) {
+    function calculate(calcMethodFunc, args) {
         tempNumber = number;
         for (var i = 0, len = args.length; i < len; i++) {
             incr = args[i];
@@ -132,11 +132,11 @@ function calculator(number = 0) {
         if (calcsObj.hasOwnProperty(operation)) {
             calcMethods[operation] = function(calcMethodFunc, object) {
                 var args = [...arguments];
+
+                args.shift();    
                 
-                args = args.slice(2);    
-                
-                return calculate(calcMethodFunc, object, args);
-            }.bind(null, calcsObj[operation], calcsObj);      
+                return calculate(calcMethodFunc, args);
+            }.bind(null, calcsObj[operation]);      
         }
     }
 
