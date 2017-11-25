@@ -94,37 +94,50 @@ function calculator(number = 0) {
     if (typeof number !== 'number') {
         throw new Error('number is not a number');
     }
-    function calculate(oper, args) {
-        var calcNumber = number;
 
-        for (var i = 0, len = args.length; i < len; i++) {
-            if (oper === 'sum') {
-                calcNumber += args[i];     
-            } else if (oper === 'dif') {
-                calcNumber -= args[i];     
-            } else if (oper === 'div') {
-                if (args[i] === 0) {
-                    throw new Error('division by 0');    
-                }
-                calcNumber /= args[i];     
-            } else if (oper === 'mul') {
-                calcNumber *= args[i];     
-            }           
-        } 
+    var tempNumber,
+        incr;
 
-        return calcNumber;    
+    var calcsObj = {
+        sum: function() {
+            tempNumber += incr; 
+        },  
+        dif: function() {
+            tempNumber -= incr; 
+        }, 
+        div: function() {
+            if (incr === 0) {
+                throw new Error('division by 0');    
+            }
+            tempNumber /= incr;
+        }, 
+        mul: function() {
+            tempNumber *= incr;
+        }
     }
-    var calcMethods = {},
-        operationsArray = ['sum', 'dif', 'div', 'mul'];
 
-    for (var i = 0, len = operationsArray.length; i < len; i++) {
-        calcMethods[operationsArray[i]] = function(operation) {
-            var args = [...arguments];
+    function calculate(calcMethodFunc, obj, args) {
+        tempNumber = number;
+        for (var i = 0, len = args.length; i < len; i++) {
+            incr = args[i];
+            calcMethodFunc(tempNumber, args[i]);        
+        }   
 
-            args.shift();  
-              
-            return calculate(operation, args);
-        }.bind(null, operationsArray[i]);
+        return tempNumber;
+    }
+
+    var calcMethods = {};
+
+    for (var operation in calcsObj) {
+        if (calcsObj.hasOwnProperty(operation)) {
+            calcMethods[operation] = function(calcMethodFunc, object) {
+                var args = [...arguments];
+                
+                args = args.slice(2);    
+                
+                return calculate(calcMethodFunc, object, args);
+            }.bind(null, calcsObj[operation], calcsObj);      
+        }
     }
 
     return calcMethods;
