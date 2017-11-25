@@ -130,7 +130,7 @@ function calculator(number = 0) {
 
     for (var operation in calcsObj) {
         if (calcsObj.hasOwnProperty(operation)) {
-            calcMethods[operation] = function(calcMethodFunc, object) {
+            calcMethods[operation] = function(calcMethodFunc) {
                 var args = [...arguments];
 
                 args.shift();    
