@@ -10,12 +10,19 @@
  Зарпещено использовать встроенные методы для работы с массивами
  */
 function isAllTrue(array, fn) {
-	
-	function isAllTrueFunc(array, fn) {
-		for (var i = 0, len = array.length; i < len; i++) {
-			if ()
-		}
-	}
+    if (array.length === 0 || array instanceof Array === false) {
+        throw new Error('empty array');
+    }
+    if (typeof fn !== 'function') {
+        throw new Error('fn is not a function');
+    }
+    for (var i = 0, len = array.length; i < len; i++) {
+        if (!fn(array[i])) {
+            return false;
+        }
+    }
+    
+    return true;
 }
 
 /*
@@ -28,6 +35,19 @@ function isAllTrue(array, fn) {
  Зарпещено использовать встроенные методы для работы с массивами
  */
 function isSomeTrue(array, fn) {
+    if (array.length === 0 || array instanceof Array === false) {
+        throw new Error('empty array');
+    }
+    if (typeof fn !== 'function') {
+        throw new Error('fn is not a function');
+    }
+    for (var i = 0, len = array.length; i < len; i++) {
+        if (fn(array[i])) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /*
@@ -39,6 +59,21 @@ function isSomeTrue(array, fn) {
  - fn не является функцией (с текстом "fn is not a function")
  */
 function returnBadArguments(fn) {
+    if (typeof fn !== 'function') {
+        throw new Error('fn is not a function');
+    }
+    var args = [...arguments],
+        excpArr = [];
+
+    for (var i = 1, len = args.length; i < len; i++) {
+        try {
+            fn(args[i]);    
+        } catch (e) {
+            excpArr.push(args[i]);    
+        }
+    }
+
+    return excpArr;
 }
 
 /*
@@ -55,7 +90,44 @@ function returnBadArguments(fn) {
  - number не является числом (с текстом "number is not a number")
  - какой-либо из аргументов div является нулем (с текстом "division by 0")
  */
-function calculator() {
+function calculator(number = 0) {
+    if (typeof number !== 'number') {
+        throw new Error('number is not a number');
+    }
+    function calculate(oper, args) {
+        var calcNumber = number;
+
+        for (var i = 0, len = args.length; i < len; i++) {
+            if (oper === 'sum') {
+                calcNumber += args[i];     
+            } else if (oper === 'dif') {
+                calcNumber -= args[i];     
+            } else if (oper === 'div') {
+                if (args[i] === 0) {
+                    throw new Error('division by 0');    
+                }
+                calcNumber /= args[i];     
+            } else if (oper === 'mul') {
+                calcNumber *= args[i];     
+            }           
+        } 
+
+        return calcNumber;    
+    }
+    var calcMethods = {},
+        operationsArray = ['sum', 'dif', 'div', 'mul'];
+
+    for (var i = 0, len = operationsArray.length; i < len; i++) {
+        calcMethods[operationsArray[i]] = function(operation) {
+            var args = [...arguments];
+
+            args.shift();  
+              
+            return calculate(operation, args);
+        }.bind(null, operationsArray[i]);
+    }
+
+    return calcMethods;
 }
 
 export {
