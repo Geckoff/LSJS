@@ -10,6 +10,7 @@ function delayPromise(seconds) {
     let myPromise = new Promise((resolve) => {
         setTimeout(resolve, seconds * 1000);
     });
+
     return myPromise;
 }
 
@@ -23,10 +24,12 @@ function delayPromise(seconds) {
 function loadAndSortTowns() {
     let myPromise = new Promise((resolve) => {
         const xhr = new XMLHttpRequest();
+
         xhr.open('GET', 'https://raw.githubusercontent.com/smelukov/citiesTest/master/cities.json');
         xhr.send();
         xhr.addEventListener('load', () => {
             const citiesArr = JSON.parse(xhr.response);
+            
             citiesArr.sort((val1, val2) => {
                 if (val1.name < val2.name)
                     return -1;
